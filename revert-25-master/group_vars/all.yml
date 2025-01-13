@@ -1,0 +1,2 @@
+docker_image_name: "brianbwire/brian-yolo-backend:v1.0.0"
+container_name: "brian-yolo-backend"
