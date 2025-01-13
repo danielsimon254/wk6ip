@@ -1,0 +1,35 @@
+---
+- name: Ensure Docker is installed
+  package:
+    name: docker.io
+    state: present
+
+- name: Start Docker service
+  service:
+    name: docker
+    state: started
+    enabled: yes
+
+- name: Pull image from Docker repository
+  docker_image:
+    name: "{{ docker_image_name }}"
+    source: pull
+
+- name: Create and start Node.js Backend container with persistent storage
+  docker_container:
+    name: "{{ container_name }}"
+    image: "{{ docker_image_name }}"
+    networks:
+      - name: app-net
+    ports:
+      - "5000:5000"
+    command: "npm start"
+    state: started
+    restart_policy: always
+    volumes:
+      - backend-data:/path/in/container
+
+- name: Create named volume for persistent storage
+  docker_volume:
+    name: backend-data
+    state: present

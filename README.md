@@ -1,5 +1,7 @@
+# STAGE 1
+
 # Overview
-This project involved the automation of configuration using ansible. Ansible is set to deploy microservices to virtualbox using Vagrant. 
+ This project involved the automation of configuration using ansible. Ansible is set to deploy microservices to virtualbox using Vagrant. 
 Everything is automated and by playing the ansible book, the application gets fired up automatically!!!
 
 
@@ -20,3 +22,8 @@ Use vagrant up --provision command
 ## User Requirements
 
 Ensure you can ssh to the provisioned VMs
+
+
+# Stage 2
+
+Stage 2 of the project uses ansible and terraform for implementation of the project.
