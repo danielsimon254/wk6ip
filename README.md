@@ -33,3 +33,6 @@ Provision with Terraform:
 1. First, run 'terraform apply' to provision the VM on VirtualBox. Terraform will set up the virtual machine and run the initialization script (init.sh), which installs Docker.
 
 2. Configure with Ansible: After the VM is provisioned and Docker is installed, run the Ansible playbook to pull the Docker image, create a container, and configure it for the application.
+
+## Best Practices Applied on this project
+Terraform in the shared repository on branch revert-25-master uses remote-exec to run the initialization script on the VM.
