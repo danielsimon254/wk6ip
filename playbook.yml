@@ -1,9 +1,55 @@
 ---
-- name: Ansible playbook to dockerize and run yolo e-commerce app using ansible
+- name: Ansible playbook to dockerize and run YOLO e-commerce app
   hosts: all
   become: true
-  roles: 
-    - frontend-deployment
-    - setup-mongodb   
-    - backend-deployment
-    
+
+  tasks:
+    - name: Install Docker and Docker Compose
+      ansible.builtin.include_role:
+        name: geerlingguy.docker
+
+    - name: Ensure Docker Compose is installed
+      get_url:
+        url: https://github.com/docker/compose/releases/latest/download/docker-compose-`uname -s`-`uname -m`
+        dest: /usr/local/bin/docker-compose
+        mode: '0755'
+
+    - name: Verify Docker Compose installation exists
+      command: docker-compose --version
+      register: docker_compose_version
+      changed_when: false
+
+    - name: Create application directory
+      ansible.builtin.file:
+        path: /opt/yolo-app
+        state: directory
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0755'
+
+    - name: Copy Docker Compose YAML file
+      ansible.builtin.copy:
+        src: docker-compose.yml
+        dest: /opt/yolo-app/docker-compose.yml
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0644'
+
+    - name: Pull and start Docker containers
+      community.docker.docker_compose:
+        project_src: /opt/yolo-app
+        state: present
+        build: false
+        pull: true
+
+    - name: Verify backend container is running
+      ansible.builtin.command:
+        cmd: docker ps -f "name=brian-yolo-backend" --format "{{.Names}}"
+      register: backend_status
+      failed_when: "'brian-yolo-backend' not in backend_status.stdout"
+
+    - name: Verify frontend container is running
+      ansible.builtin.command:
+        cmd: docker ps -f "name=brian-yolo-client" --format "{{.Names}}"
+      register: frontend_status
+      failed_when: "'brian-yolo-client' not in frontend_status.stdout"
