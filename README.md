@@ -27,3 +27,9 @@ Ensure you can ssh to the provisioned VMs
 # Stage 2
 
 Stage 2 of the project uses ansible and terraform for implementation of the project.
+
+## Running the Process using terraform
+Provision with Terraform: 
+1. First, run 'terraform apply' to provision the VM on VirtualBox. Terraform will set up the virtual machine and run the initialization script (init.sh), which installs Docker.
+
+2. Configure with Ansible: After the VM is provisioned and Docker is installed, run the Ansible playbook to pull the Docker image, create a container, and configure it for the application.
