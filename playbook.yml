@@ -1,55 +1,47 @@
 ---
-- name: Ansible playbook to dockerize and run YOLO e-commerce app
-  hosts: all
+- name: Ansible playbook to dockerize and run YOLO e-commerce app with Vagrant
+  hosts: localhost
   become: true
 
+  vars:
+    vagrant_project_dir: /opt/yolo-vagrant
+    git_repo: "https://github.com/danielsimon254/wk6ip"
+
   tasks:
-    - name: Install Docker and Docker Compose
-      ansible.builtin.include_role:
-        name: geerlingguy.docker
+    - name: Ensure necessary packages are installed
+      ansible.builtin.package:
+        name:
+          - git
+          - vagrant
+          - virtualbox
+        state: present
 
-    - name: Ensure Docker Compose is installed
-      get_url:
-        url: https://github.com/docker/compose/releases/latest/download/docker-compose-`uname -s`-`uname -m`
-        dest: /usr/local/bin/docker-compose
-        mode: '0755'
-
-    - name: Verify Docker Compose installation exists
-      command: docker-compose --version
-      register: docker_compose_version
-      changed_when: false
-
-    - name: Create application directory
+    - name: Create Vagrant project directory
       ansible.builtin.file:
-        path: /opt/yolo-app
+        path: "{{ vagrant_project_dir }}"
         state: directory
-        owner: "{{ ansible_user }}"
-        group: "{{ ansible_user }}"
         mode: '0755'
 
-    - name: Copy Docker Compose YAML file
-      ansible.builtin.copy:
-        src: docker-compose.yml
-        dest: /opt/yolo-app/docker-compose.yml
-        owner: "{{ ansible_user }}"
-        group: "{{ ansible_user }}"
-        mode: '0644'
+    - name: Clone the GitHub repository
+      ansible.builtin.git:
+        repo: "{{ git_repo }}"
+        dest: "{{ vagrant_project_dir }}"
+        version: HEAD
 
-    - name: Pull and start Docker containers
+    - name: Initialize and start Vagrant
+      command: vagrant up
+      args:
+        chdir: "{{ vagrant_project_dir }}"
+
+    - name: Run Docker Compose on the VM
       community.docker.docker_compose:
-        project_src: /opt/yolo-app
+        project_src: "/vagrant"
         state: present
         build: false
         pull: true
+      delegate_to: localhost
 
-    - name: Verify backend container is running
-      ansible.builtin.command:
-        cmd: docker ps -f "name=brian-yolo-backend" --format "{{.Names}}"
-      register: backend_status
-      failed_when: "'brian-yolo-backend' not in backend_status.stdout"
-
-    - name: Verify frontend container is running
-      ansible.builtin.command:
-        cmd: docker ps -f "name=brian-yolo-client" --format "{{.Names}}"
-      register: frontend_status
-      failed_when: "'brian-yolo-client' not in frontend_status.stdout"
+    - name: Verify application accessibility
+      uri:
+        url: "http://localhost:3000"
+        status_code: 200
