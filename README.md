@@ -19,6 +19,8 @@ The Images will be pulled from the following docker hub account: brianbwire/bria
 ## How to run the app
 Use vagrant up --provision command
 
+![Alt text](vag.png)
+
 ## User Requirements
 
 Ensure you can ssh to the provisioned VMs
