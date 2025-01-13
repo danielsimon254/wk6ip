@@ -1,0 +1,20 @@
+---
+- name: Provision and configure Backend Infrastructure on VirtualBox
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: Run Terraform to provision VirtualBox resources
+      command: terraform apply -auto-approve
+      args:
+        chdir: "/path/to/terraform/directory"
+
+    - name: Wait for the backend server to be accessible
+      wait_for:
+        host: "{{ terraform_vm_ips[0] }}"
+        port: 22
+        delay: 10
+        timeout: 300
+
+    - name: Include backend configuration tasks
+      import_role:
+        name: configure_backend
