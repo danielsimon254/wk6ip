@@ -36,3 +36,6 @@ Provision with Terraform:
 
 ## Best Practices Applied on this project
 Terraform in the shared repository on branch revert-25-master uses remote-exec to run the initialization script on the VM.
+
+## NOTE
+Ensure that SSH access is correctly set up for successful deployment.
