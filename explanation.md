@@ -1,10 +1,10 @@
-##Explanation of the Ansible Playbook to Deploy YOLO E-commerce App
+# Explanation of the Ansible Playbook to Deploy YOLO E-commerce App
 
-#Overview
+# Overview
 
 This document explains the structure and functionality of the Ansible playbook designed to deploy the YOLO e-commerce application. The playbook automates the process of cloning the project repository, setting up a Vagrant environment with ubuntu/focal64, and running Docker containers defined in the docker-compose.yml files.
 
-#Purpose
+## Purpose
 
 The playbook simplifies the deployment process by:
 
@@ -18,7 +18,7 @@ The playbook simplifies the deployment process by:
 
 5.Verifying that the application is accessible in a browser.
 
-##Playbook Workflow
+## Playbook Workflow
 
 1. Installing Required Packages
 
